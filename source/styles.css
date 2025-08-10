@@ -5467,64 +5467,85 @@ footer .phone a:focus {
 
 
 .online-marketing {
-  padding: 60px 0;
-  background: #fff;
-  font-family: 'Arial', sans-serif;
+    padding: 60px 0;
+    background: #fff;
+    font-family: 'Arial', sans-serif;
 }
 
 .online-marketing .section-header {
-  text-align: center;
-  max-width: 900px;
-  margin: 0 auto 40px;
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto 40px;
 }
 
 .online-marketing .section-header h2 {
-  font-size: 32px;
-  font-weight: 700;
-  color: #222;
-  margin-bottom: 15px;
+    font-size: 32px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 15px;
 }
 
 .online-marketing .section-header p {
-  font-size: 16px;
-  color: #555;
-  line-height: 1.6;
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
 }
 
 .services-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
 }
 
 .service-item {
-  background: #f9f9f9;
-  padding: 25px;
-  border-radius: 10px;
-  text-align: center;
-  transition: all 0.3s ease;
+    background: #f9f9f9;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
 }
 
 .service-item:hover {
-  background: #fff;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .service-item img {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 20px;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
 }
 
 .service-item h3 {
-  font-size: 20px;
-  color: #333;
-  font-weight: 600;
-  margin-bottom: 10px;
+    font-size: 20px;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 10px;
 }
 
 .service-item p {
-  font-size: 14px;
-  color: #666;
-  line-height: 1.6;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.swiper {
+  width: 100%;
+  padding: 20px 0;
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide img.img-fluid {
+  width: 120px; /* Bigger logos */
+  height: auto;
+  object-fit: contain;
+}
+
+.swiper-slide {
+  padding: 10px; /* Gap between logos */
 }

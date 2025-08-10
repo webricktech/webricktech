@@ -44,7 +44,8 @@
     <link rel="stylesheet" href="./source/search.css">
     <link rel="stylesheet" href="./source/base.css">
     <link rel="stylesheet" href="./source/scrollbar.css">
-    <link rel="stylesheet" href="./source/styles.css">
+    <link rel="stylesheet" href="./source/styles.css?v=2">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <!-- Performance & Prefetch -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
@@ -344,26 +345,34 @@
             </div>
         </section>
 
-        <!-- ANIMATION LINE
-        ================================================== -->
-        <div class="award-image mt-5 -mb-5">
-        <img 
-            src="https://gmsdigitals.com/wp-content/uploads/2025/05/awardimage2020-1300x173.webp" 
-            alt="Award Image 2020"
-            width="1300" 
-            height="173" 
-            loading="lazy" 
-            decoding="async"
-            srcset="
-            https://gmsdigitals.com/wp-content/uploads/2025/05/awardimage2020-400x53.webp 400w,
-            https://gmsdigitals.com/wp-content/uploads/2025/05/awardimage2020-768x102.webp 768w,
-            https://gmsdigitals.com/wp-content/uploads/2025/05/awardimage2020-1300x173.webp 1300w,
-            https://gmsdigitals.com/wp-content/uploads/2025/05/awardimage2020-1536x204.webp 1536w,
-            https://gmsdigitals.com/wp-content/uploads/2025/05/awardimage2020.webp 2048w
-            "
-            sizes="(max-width: 1300px) 100vw, 1300px"
-        >
+        <!-- Industries Section -->
+        <section class="py-5 bg-white">
+        <div class="container text-center">
+            <h2 class="mb-4">Industries <b>We Serve</b></h2>
+
+            <!-- Swiper -->
+            <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                <!-- each slide uses .slide-inner to control width (keeps consistent sizing) -->
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/Automotive.png" alt="Automotive" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/Consulting.png" alt="Consulting" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/E-Commerce.png" alt="E Commerce" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/education.png" alt="Education" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/Entertainment.png" alt="Entertainment" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/Fashion.png" alt="Fashion" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/Finance.png" alt="Finance" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/Fitness.png" alt="Fitness" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/Healthcare.png" alt="Healthcare" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/Home-Services.png" alt="Home Services" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/Non-Profit.png" alt="Non Profit" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/Real-Estate.png" alt="Real Estate" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/Tech.png" alt="Tech" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/Travel.png" alt="Travel" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="slide-inner"><img src="https://gmsdigitals.com/wp-content/uploads/2025/06/food-1.png" alt="Food" loading="lazy"></div></div>
+            </div>
+            </div>
         </div>
+        </section>
 
 
         <!-- CLIENT
@@ -738,8 +747,11 @@
     <!-- popper js -->
     <script src="./source/popper.min.js"></script>
 
-    <!-- bootstrap -->
-    <script src="./source/bootstrap.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <!-- scroll -->
     <script src="./source/jquery.scrollbar.min.js"></script>
@@ -757,7 +769,7 @@
     <script src="./source/plugins.js"></script>
 
     <!-- form scripts js -->
-    <script src="./source/scripts.js"></script>
+    <script src="./source/scripts.js?v=2"></script>
 
     <!-- all js include end -->
 
