@@ -1,0 +1,67 @@
+version: "3.8"
+
+services:
+  rclone:
+    image: rclone/rclone:latest
+    container_name: rclone-gdrive
+    restart: always
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        mkdir -p /config/rclone
+        echo "$GOOGLE_CREDENTIALS_BASE64" | base64 -d > /config/rclone/credentials.json
+
+        rclone config create gdrive drive scope=drive \
+          service_account_file=/config/rclone/credentials.json
+
+        mkdir -p /mnt/gdrive
+        rclone mount gdrive:${GOOGLE_DRIVE_FOLDER} /mnt/gdrive \
+          --vfs-cache-mode writes \
+          --allow-other \
+          --dir-cache-time 72h \
+          --poll-interval 15s \
+          --umask 000 \
+          --log-level INFO
+    environment:
+      - GOOGLE_CREDENTIALS_BASE64=${GOOGLE_CREDENTIALS_BASE64}
+      - GOOGLE_DRIVE_FOLDER=${GOOGLE_DRIVE_FOLDER}
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - /dev/fuse
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - rclone-config:/config/rclone
+      - gdrive-data:/mnt/gdrive
+
+  directus:
+    image: directus/directus:11
+    container_name: directus
+    depends_on:
+      - rclone
+    environment:
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - DB_CLIENT=${DB_CLIENT}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - WEBSOCKETS_ENABLED=true
+      - CORS_ENABLED=true
+      - CORS_ORIGIN=*
+    volumes:
+      - directus-database:/directus/database
+      - gdrive-data:/directus/uploads  # Mount Google Drive here
+      - directus-extensions:/directus/extensions
+      - directus-templates:/directus/templates
+    restart: always
+
+volumes:
+  directus-database:
+  directus-extensions:
+  directus-templates:
+  rclone-config:
+  gdrive-data:
