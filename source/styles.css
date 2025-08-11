@@ -5549,3 +5549,20 @@ footer .phone a:focus {
 .swiper-slide {
   padding: 10px; /* Gap between logos */
 }
+
+
+@media only screen and (max-width: 600px) {
+    .mySwiper {
+        scale: 2.5 !important;
+        margin-bottom: -10px;
+    }
+    .swiper-slide{
+        scale: 1.2;
+        padding: 4px;
+        margin-top: 20px;
+        padding-bottom: -20px;
+    }
+    .swiper {
+        padding: 10px 0;
+    }
+}
