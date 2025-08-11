@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Configuration
+// Configuration
     const config = {
-        postsPerPage: 4,
+        postsPerPage: 6, // Matches the 2x3 grid layout
         recentPostsCount: 3
     };
 
@@ -47,7 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
             renderPagination();
         } catch (err) {
             console.error('Error fetching posts:', err);
-            elements.postsContainer.innerHTML = `<div class="alert alert-danger">Could not load blog posts. Please try again later.</div>`;
+            elements.postsContainer.innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-danger">Could not load blog posts. Please try again later.</div>
+                </div>
+            `;
         }
     }
 
@@ -57,45 +61,48 @@ document.addEventListener('DOMContentLoaded', () => {
         const postsToShow = state.filteredPosts.slice(startIndex, startIndex + config.postsPerPage);
 
         const fragment = document.createDocumentFragment();
-        for (const post of postsToShow) {
-            fragment.appendChild(await createPostElement(post));
+        for (const [index, post] of postsToShow.entries()) {
+            const delay = index % 2 === 0 ? '200ms' : '300ms'; // Alternating animation delays
+            fragment.appendChild(await createPostElement(post, delay));
         }
         elements.postsContainer.innerHTML = '';
         elements.postsContainer.appendChild(fragment);
     }
 
     // Create post element (no extra fetch for authors)
-    async function createPostElement(post) {
+    async function createPostElement(post, delay) {
         const formattedDate = formatDate(post.updated_at || post.created_at);
         const authorName = state.authorsCache.get(post.author_id) || 'Contributor';
 
-        const article = document.createElement('article');
-        article.className = 'card card-style02 rounded mt-2-2 wow fadeInUp';
-        article.setAttribute('data-wow-delay', '100ms');
-        article.style.visibility = 'visible';
-        article.style.animationName = 'fadeInUp';
+        const colDiv = document.createElement('div');
+        colDiv.className = 'col-md-6 mt-2-2 wow fadeInUp';
+        colDiv.setAttribute('data-wow-delay', delay);
+        colDiv.style.visibility = 'visible';
+        colDiv.style.animationName = 'fadeInUp';
 
-        article.innerHTML = `
-            <div class="blog-img position-relative overflow-hidden image-hover rounded-top">
-                <img src="https://admin.webricktech.com/assets/${post.blog_image || './source/blog-01.jpg'}" alt="${post.title || 'Blog post'}">
-                <span><a href="#">${post.category || getCategory(post)}</a></span>
-            </div>
-            <div class="card-body p-1-6 p-lg-2-3">
-                <h4 class="h3 mb-3"><a href="blog-details.html?slug=${post.slug}">${post.title || 'No title'}</a></h4>
-                <p class="mb-3">${post.content || 'No content available.'}</p>
-                <div class="blog-author">
-                    <div class="me-auto">
-                        <span class="blog-date">${formattedDate}</span>
-                        <div class="author-name">By <a href="#">${authorName}</a></div>
-                    </div>
-                    <div class="blog-like">
-                        <a href="#"><i class="fa-regular fa-message text-primary"></i>
-                        <span class="font-weight-600 align-middle">0</span></a>
+        colDiv.innerHTML = `
+            <article class="card card-style02 rounded h-100">
+                <div class="blog-img position-relative overflow-hidden image-hover">
+                    <img src="https://admin.webricktech.com/assets/${post.blog_image }" alt="${post.title || 'Blog post'}" class="rounded-top">
+                    <span><a href="#">${post.category || getCategory(post)}</a></span>
+                </div>
+                <div class="card-body p-1-6 p-lg-2-3">
+                    <h4 class="mb-3"><a href="blog-details.html?slug=${post.slug}">${post.title || 'No title'}</a></h4>
+                    <p class="mb-3">${post.content ? post.content.substring(0, 100) + '...' : 'No content available.'}</p>
+                    <div class="blog-author">
+                        <div class="me-auto">
+                            <span class="blog-date">${formattedDate}</span>
+                            <div class="author-name">By <a href="#">${authorName}</a></div>
+                        </div>
+                        <div class="blog-like">
+                            <a href="#"><i class="fa-regular fa-message text-primary"></i>
+                            <span class="font-weight-600 align-middle">0</span></a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </article>
         `;
-        return article;
+        return colDiv;
     }
 
     function renderRecentPosts() {
@@ -105,12 +112,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const fragment = document.createDocumentFragment();
         recentPosts.forEach((post, i) => {
-            const formattedDate = formatDate(post.published_at || post.updated_at || post.created_at, { month: 'short', day: 'numeric', year: 'numeric' });
+            const formattedDate = formatDate(post.published_at || post.updated_at || post.created_at, { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
             const div = document.createElement('div');
             div.className = 'd-flex mb-4';
             div.innerHTML = `
                 <div class="flex-shrink-0">
-                    <img src="https://admin.webricktech.com/assets/${post.blog_image}?width=50&quality=60&fit=contain" alt="${post.title}" class="rounded">
+                    <img src="https://admin.webricktech.com/assets/${post.blog_image}?width=85&height=85&quality=60&fit=cover" alt="${post.title}" class="rounded">
                 </div>
                 <div class="flex-grow-1 ms-3">
                     <h4 class="mb-2 h6"><a href="blog-details.html?slug=${post.slug}" class="text-white text-primary-hover">${post.title || 'Recent Post'}</a></h4>
