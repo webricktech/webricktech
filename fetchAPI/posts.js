@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     // Configuration
     const config = {
         postsPerPage: 4,
@@ -8,9 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // State
     const state = {
         currentPage: 1,
-        totalPosts: 0,
         allPosts: [],
-        filteredPosts: []
+        filteredPosts: [],
+        authorsCache: new Map()
     };
 
     // DOM Elements
@@ -26,55 +26,48 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchPosts();
     setupEventListeners();
 
-    // Functions
-    function fetchPosts() {
-        fetch('https://admin.webricktech.com/items/posts')
-            .then(response => response.json())
-            .then(data => {
-                state.allPosts = data.data;
-                state.totalPosts = state.allPosts.length;
-                state.filteredPosts = [...state.allPosts];
-                
-                // Sort by date (newest first)
-                state.filteredPosts.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-                
-                renderPosts();
-                renderRecentPosts();
-                renderPagination();
-            })
-            .catch(error => {
-                console.error('Error fetching posts:', error);
-                elements.postsContainer.innerHTML = `
-                    <div class="alert alert-danger">
-                        Could not load blog posts. Please try again later.
-                    </div>
-                `;
-            });
+    // Fetch posts and preload author names in one go
+    async function fetchPosts() {
+        try {
+            const res = await fetch('https://admin.webricktech.com/items/posts');
+            const json = await res.json();
+            state.allPosts = json.data || [];
+            state.filteredPosts = [...state.allPosts].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+
+            // Preload authors to avoid multiple fetch calls
+            const authorIds = [...new Set(state.allPosts.map(p => p.author_id))].filter(Boolean);
+            if (authorIds.length) {
+                const authorsRes = await fetch(`https://admin.webricktech.com/items/team_members?fields=id,name&filter[id][_in]=${authorIds.join(',')}`);
+                const authorsJson = await authorsRes.json();
+                (authorsJson.data || []).forEach(author => state.authorsCache.set(author.id, author.name));
+            }
+
+            renderPosts();
+            renderRecentPosts();
+            renderPagination();
+        } catch (err) {
+            console.error('Error fetching posts:', err);
+            elements.postsContainer.innerHTML = `<div class="alert alert-danger">Could not load blog posts. Please try again later.</div>`;
+        }
     }
 
+    // Render posts using DocumentFragment for minimal reflows
     async function renderPosts() {
-    const startIndex = (state.currentPage - 1) * config.postsPerPage;
-    const endIndex = startIndex + config.postsPerPage;
-    const postsToShow = state.filteredPosts.slice(startIndex, endIndex);
+        const startIndex = (state.currentPage - 1) * config.postsPerPage;
+        const postsToShow = state.filteredPosts.slice(startIndex, startIndex + config.postsPerPage);
 
-    // Clear existing posts
-    elements.postsContainer.innerHTML = '';
-
-    // Add new posts (await the creation of each)
-    for (const post of postsToShow) {
-        const postElement = await createPostElement(post);
-        elements.postsContainer.appendChild(postElement);
+        const fragment = document.createDocumentFragment();
+        for (const post of postsToShow) {
+            fragment.appendChild(await createPostElement(post));
+        }
+        elements.postsContainer.innerHTML = '';
+        elements.postsContainer.appendChild(fragment);
     }
-}
 
-
+    // Create post element (no extra fetch for authors)
     async function createPostElement(post) {
-        const postDate = post.updated_at || post.created_at;
-        const formattedDate = postDate ? new Date(postDate).toLocaleDateString('en-US', {
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric'
-        }) : 'No date';
+        const formattedDate = formatDate(post.updated_at || post.created_at);
+        const authorName = state.authorsCache.get(post.author_id) || 'Contributor';
 
         const article = document.createElement('article');
         article.className = 'card card-style02 rounded mt-2-2 wow fadeInUp';
@@ -85,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
         article.innerHTML = `
             <div class="blog-img position-relative overflow-hidden image-hover rounded-top">
                 <img src="https://admin.webricktech.com/assets/${post.blog_image || './source/blog-01.jpg'}" alt="${post.title || 'Blog post'}">
-                <span><a href="#">${post.category}</a></span>
+                <span><a href="#">${post.category || getCategory(post)}</a></span>
             </div>
             <div class="card-body p-1-6 p-lg-2-3">
                 <h4 class="h3 mb-3"><a href="blog-details.html?slug=${post.slug}">${post.title || 'No title'}</a></h4>
@@ -93,44 +86,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="blog-author">
                     <div class="me-auto">
                         <span class="blog-date">${formattedDate}</span>
-                        <div class="author-name">
-                            By <a href="#">${await getAuthorName(post.author_id)}</a>
-                        </div>
+                        <div class="author-name">By <a href="#">${authorName}</a></div>
                     </div>
                     <div class="blog-like">
-                        <a href="#">
-                            <i class="fa-regular fa-message text-primary"></i>
-                            <span class="font-weight-600 align-middle">0</span>
-                        </a>
+                        <a href="#"><i class="fa-regular fa-message text-primary"></i>
+                        <span class="font-weight-600 align-middle">0</span></a>
                     </div>
                 </div>
             </div>
         `;
-
         return article;
     }
 
     function renderRecentPosts() {
-        // Get most recent posts
         const recentPosts = [...state.allPosts]
             .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
             .slice(0, config.recentPostsCount);
 
-        // Clear existing recent posts
-        elements.recentPostsContainer.innerHTML = '';
-
-        // Add new recent posts
-        recentPosts.forEach((post, index) => {
-            const postDate = post.published_at || post.updated_at || post.created_at;
-            const formattedDate = postDate ? new Date(postDate).toLocaleDateString('en-US', {
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric'
-            }) : 'No date';
-
-            const recentPostDiv = document.createElement('div');
-            recentPostDiv.className = 'd-flex mb-4';
-            recentPostDiv.innerHTML = `
+        const fragment = document.createDocumentFragment();
+        recentPosts.forEach((post, i) => {
+            const formattedDate = formatDate(post.published_at || post.updated_at || post.created_at, { month: 'short', day: 'numeric', year: 'numeric' });
+            const div = document.createElement('div');
+            div.className = 'd-flex mb-4';
+            div.innerHTML = `
                 <div class="flex-shrink-0">
                     <img src="https://admin.webricktech.com/assets/${post.blog_image}?width=50&quality=60&fit=contain" alt="${post.title}" class="rounded">
                 </div>
@@ -139,115 +117,84 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span class="text-white opacity8 small">${formattedDate}</span>
                 </div>
             `;
-            elements.recentPostsContainer.appendChild(recentPostDiv);
+            fragment.appendChild(div);
         });
+
+        elements.recentPostsContainer.innerHTML = '';
+        elements.recentPostsContainer.appendChild(fragment);
     }
 
     function renderPagination() {
         const totalPages = Math.ceil(state.filteredPosts.length / config.postsPerPage);
-        
-        // Clear existing pagination
-        elements.paginationControls.innerHTML = '';
-        
-        // Previous button
-        const prevLi = document.createElement('li');
-        prevLi.innerHTML = `<a href="#posts-container" class="${state.currentPage === 1 ? 'disabled' : ''}"><i class="ti-arrow-left"></i></a>`;
-        prevLi.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (state.currentPage > 1) {
-                state.currentPage--;
-                renderPosts();
-                renderPagination();
-            }
-        });
-        elements.paginationControls.appendChild(prevLi);
-        
-        // Page numbers
-        for (let i = 1; i <= totalPages; i++) {
-            const pageLi = document.createElement('li');
-            if (i === state.currentPage) pageLi.className = 'active';
-            pageLi.innerHTML = `<a href="#posts-container">${i.toString().padStart(2, '0')}</a>`;
-            pageLi.addEventListener('click', (e) => {
+        if (totalPages <= 1) {
+            elements.paginationControls.innerHTML = '';
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        const createButton = (label, disabled, onClick) => {
+            const li = document.createElement('li');
+            if (disabled) li.className = 'disabled';
+            li.innerHTML = `<a href="#posts-container">${label}</a>`;
+            if (!disabled) li.addEventListener('click', e => {
                 e.preventDefault();
+                onClick();
+            });
+            return li;
+        };
+
+        fragment.appendChild(createButton('<i class="ti-arrow-left"></i>', state.currentPage === 1, () => {
+            state.currentPage--;
+            renderPosts();
+            renderPagination();
+        }));
+
+        for (let i = 1; i <= totalPages; i++) {
+            const li = createButton(i.toString().padStart(2, '0'), false, () => {
                 state.currentPage = i;
                 renderPosts();
                 renderPagination();
             });
-            elements.paginationControls.appendChild(pageLi);
+            if (i === state.currentPage) li.className = 'active';
+            fragment.appendChild(li);
         }
-        
-        // Next button
-        const nextLi = document.createElement('li');
-        nextLi.innerHTML = `<a href="#posts-container" class="${state.currentPage === totalPages ? 'disabled' : ''}"><i class="ti-arrow-right"></i></a>`;
-        nextLi.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (state.currentPage < totalPages) {
-                state.currentPage++;
-                renderPosts();
-                renderPagination();
-            }
-        });
-        elements.paginationControls.appendChild(nextLi);
+
+        fragment.appendChild(createButton('<i class="ti-arrow-right"></i>', state.currentPage === totalPages, () => {
+            state.currentPage++;
+            renderPosts();
+            renderPagination();
+        }));
+
+        elements.paginationControls.innerHTML = '';
+        elements.paginationControls.appendChild(fragment);
     }
 
     function searchPosts() {
-        const searchTerm = elements.searchInput.value.toLowerCase();
-        
-        if (searchTerm === '') {
-            state.filteredPosts = [...state.allPosts];
-        } else {
-            state.filteredPosts = state.allPosts.filter(post => 
-                (post.title && post.title.toLowerCase().includes(searchTerm)) ||
-                (post.content && post.content.toLowerCase().includes(searchTerm))
-            );
-        }
-        
+        const term = elements.searchInput.value.trim().toLowerCase();
+        state.filteredPosts = term
+            ? state.allPosts.filter(post =>
+                (post.title && post.title.toLowerCase().includes(term)) ||
+                (post.content && post.content.toLowerCase().includes(term))
+            )
+            : [...state.allPosts];
+
         state.currentPage = 1;
         renderPosts();
         renderPagination();
     }
 
-    async function getAuthorName(authorId) {
-        
-        const url = `https://admin.webricktech.com/items/team_members?fields=name&filter[id][_eq]=${authorId}`;
-
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            if (data.data && data.data.length > 0) {
-                return data.data[0].name;
-            } else {
-                return "Contributor"; // fallback if no author found
-            }
-        } catch (error) {
-            console.error("Error fetching author name:", error);
-            return "Contributor";
-        }
+    function formatDate(dateStr, options = { year: 'numeric', month: 'long', day: 'numeric' }) {
+        return dateStr ? new Date(dateStr).toLocaleDateString('en-US', options) : 'No date';
     }
 
-
     function getCategory(post) {
-        const categoryMap = {
-            'seo': 'SEO',
-            'marketing': 'Marketing',
-            'serverless': 'Technology',
-            'branding': 'Business'
-        };
-        
-        for (const [key, value] of Object.entries(categoryMap)) {
-            if (post.slug.includes(key)) return value;
-        }
-        return 'General';
+        const map = { seo: 'SEO', marketing: 'Marketing', serverless: 'Technology', branding: 'Business' };
+        return Object.entries(map).find(([k]) => post.slug?.includes(k))?.[1] || 'General';
     }
 
     function setupEventListeners() {
-        // Search functionality
         elements.searchButton.addEventListener('click', searchPosts);
-        elements.searchInput.addEventListener('keypress', (e) => {
+        elements.searchInput.addEventListener('keypress', e => {
             if (e.key === 'Enter') searchPosts();
         });
     }
