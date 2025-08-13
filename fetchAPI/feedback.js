@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async function () {
-    const apiUrl = 'https://admin.webricktech.com/items/feedback?fields=comments,created_at,customer_id.name,customer_id.customer_photo';
+    const apiUrl = 'https://admin.webricktech.com/items/customer_feedback?fields=content,created_at,customer_id.company_name,customer_id.customer_photo';
 
     try {
         const response = await fetch(apiUrl);
@@ -13,11 +13,11 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Build HTML for carousel items
         let newSlidesHTML = '';
         data.forEach(item => {
-            const customerName = item.customer_id?.name || 'Anonymous';
+            const customerName = item.customer_id?.company_name || 'Anonymous';
             const customerPhoto = item.customer_id?.customer_photo
                 ? `https://admin.webricktech.com/assets/${item.customer_id.customer_photo}?width=214&height=214&fit=cover`
                 : './source/avatar-placeholder.jpg';
-            const comment = item.comments || '';
+            const comment = item.content || '';
 
             newSlidesHTML += `
                 <div>
