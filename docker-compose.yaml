@@ -1,46 +1,18 @@
-version: "3.8"
-
 services:
-  rclone:
-    image: rclone/rclone:latest
-    container_name: rclone_gdrive
-    restart: unless-stopped
-    environment:
-      - RCLONE_CONFIG_GDRIVE_TYPE=${RCLONE_CONFIG_GDRIVE_TYPE}
-      - RCLONE_CONFIG_GDRIVE_SCOPE=${RCLONE_CONFIG_GDRIVE_SCOPE}
-      - RCLONE_CONFIG_GDRIVE_TOKEN=${RCLONE_CONFIG_GDRIVE_TOKEN}
-    command: mount gdrive: /mnt/gdrive \
-      --allow-other \
-      --vfs-cache-mode writes \
-      --vfs-cache-max-size 50G \
-      --dir-cache-time 72h \
-      --poll-interval 15s \
-      --log-level INFO
-    cap_add:
-      - SYS_ADMIN
-    devices:
-      - /dev/fuse
-    security_opt:
-      - apparmor:unconfined
-    volumes:
-      - directus-uploads:/mnt/gdrive
-
   directus:
-    image: 'directus/directus:11'
-    container_name: directus_app
-    restart: unless-stopped
+    image: 'directus/directus:11.10'
     volumes:
       - 'directus-database:/directus/database'
-      - 'directus-uploads:/directus/uploads'  # Now shared with rclone mount
+      - 'directus-uploads:/directus/uploads'
       - 'directus-extensions:/directus/extensions'
       - 'directus-templates:/directus/templates'
     environment:
       - SERVICE_FQDN_DIRECTUS_8055
-      - KEY=${SERVICE_BASE64_64_KEY}
-      - SECRET=${SERVICE_BASE64_64_SECRET}
-      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@webricktech.com}
-      - ADMIN_PASSWORD=${SERVICE_PASSWORD_ADMIN}
-      - DB_CLIENT=${DB_CLIENT}
+      - KEY=$SERVICE_BASE64_64_KEY
+      - SECRET=$SERVICE_BASE64_64_SECRET
+      - 'ADMIN_EMAIL=${ADMIN_EMAIL:-admin@example.com}'
+      - ADMIN_PASSWORD=$SERVICE_PASSWORD_ADMIN
+      - DB_CLIENT=mysql
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
       - DB_DATABASE=${DB_DATABASE}
@@ -48,20 +20,19 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - WEBSOCKETS_ENABLED=true
 
-      # CORS Settings
       - CORS_ENABLED=true
       - CORS_ORIGIN=${CORS_ORIGIN}
       - CORS_METHODS=GET,POST,PATCH,DELETE
       - CORS_ALLOWED_HEADERS=Content-Type,Authorization
       - CORS_EXPOSED_HEADERS=Content-Range
+      - PUBLIC_URL=https://admin.webricktech.com
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8055/admin/login"]
+      test:
+        - CMD
+        - wget
+        - '-q'
+        - '--spider'
+        - 'http://127.0.0.1:8055/admin/login'
       interval: 5s
       timeout: 20s
       retries: 10
-
-volumes:
-  directus-database:
-  directus-uploads:
-  directus-extensions:
-  directus-templates:

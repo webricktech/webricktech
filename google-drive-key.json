@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "webricktech-directus-rclone",
+  "private_key_id": "3da8da69a279a60c7c83b5b94f079a9e7d2292f1",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDZzrH/vdeeYJ2h\nkDiodujotLEDaWQIcdDxbl8g8GupO+CQeAFxf08MeTMY67IgMKDxULvA6WnMMbZR\nuDFyN2q9UmMGwXqEvjpUhzfRVXFsLjQliJ5Ef6NKCV2PIDk6nnBf9V5R1Cp/chLb\nNneu3rKc80PGMELwkYzc/EK+wigoJ1gnQ7GhOwP7wx8//JZJiijettFN8ccz1fMV\nxrjAnG31EgIGYZOk9zMvYs1GL/LnWdT4Sevk7DIznySR3bH0qy2WNl44ZaQBZMja\nVyxBsCuZ4xLNWKueRjR/ND27kEva1KhTCzUD2dV4TMx8CHH9AezMgiwCvM17qN2k\nEWwSlCN5AgMBAAECggEAA8PN6DVmPKjGBlwIqK8DTcg9/sJTridjSzsP/9dVpK0b\nthX6JpwcXnZm9SIxpLRzSCL2V3cvz5pkrZywSR2O9b/bi5gGUVtVUe75uDLHHtpp\n5xcWYkMUP3dyOfyk+v/Wwi5EX6GtP64pFO40xMDSp+hQdnfQ1/++4ANOkL81kPBJ\nMzZ+4icWGQQo5UkFH5OoY8kfMW2322MJQdoKl2BaqochHj7fuyb/rvJ/2PkXkKPS\n8MlwOwYG/+v3YKF0znBR7mAq42XchnkeEJl/0VatkGxXA60l9kbKn2MqMzLT+6J8\n5aWNo2Of+eifbELsvasWSgQaG48MMNHFwrpbsg3aIQKBgQDu5zfQojWVP8qS+47p\nAiYuiLba/k78au+l7T86CVi7lNXMNFsWbM0pL7NBZcaogAAvXFjSlULiOSxoRrUW\nGFhTESEbhXaNlr4/dtcp3R1H/Q2rOB405VWFrRlza8SK8gR21ZIxkVv5fR5vlxtt\ndtJJ6BXUgkwNAzHNpyXC5Q1K4QKBgQDpZP7nEeLrSk4XY8B7I7NfniAlpK067ZQM\n4Ubkuf/3K197RsmKe/38nDHTwcgTmeCB0Qe10yXxXWLJck7u1Ok63nW8STgEwPpb\nVE+Mgt4syqJKN+N6x2QasXPtQFxMAsS3q+PCoZP5VxVRFaMdZS40jKRQB9CWBANA\nE8NkEbnDmQKBgQCQ4Se4HqbgHA99k5DXPbZqAf7iT9cWvMMYnQf66jAlkd0WOaoD\nr3e7wnGy90XCad2y2w4CpwIorwN/OWIYRCtMNNcfGZELzJ8TXb6eZLmdLplbfGzV\nJz72EkOc+331xU9vwZUm+kAMzRPoGHtJpwVgTJ7wgRQd0BIj5XnA96dYAQKBgQDn\noMz9ZBnxa2f+/IedbfvpzFOZKEqnrfr9oWGrRBENK2VyQfloz89ssVMeFjZLha5z\nB5GAWRJR7V1KEYDWtETXoMn12DCZPy/4Db948rQufdf8kmTXiCUH/M7RScuPwDud\nESFUGulxToSgWTntxWnKyz2TE35mM4tKP5LtsE3NGQKBgH4NxrKeXWCxOw43EdHt\nsIs5kNeTSuh+ApIhZHUBMXl2glDO9eC7GqT0eME43/MxjCEjvOP3HEWbwl1Qbwy1\n/rZNVw4vPW996e2+reV/wo5cFkQ+s4dAbEJfLgtZZlX7wkRt9PaF1xmPmGKpzTFg\nzTgCcjcG+rbQ+rMNgTtSt8+t\n-----END PRIVATE KEY-----\n",
+  "client_email": "api-for-gogole-drive@webricktech-directus-rclone.iam.gserviceaccount.com",
+  "client_id": "103319810205675692153",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/api-for-gogole-drive%40webricktech-directus-rclone.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
