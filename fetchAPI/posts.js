@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fetch posts and preload author names in one go
     async function fetchPosts() {
         try {
-            const res = await fetch('https://admin.webricktech.com/items/posts');
+            const res = await fetch('https://admin.webricktech.com/items/blog_posts');
             const json = await res.json();
             state.allPosts = json.data || [];
             state.filteredPosts = [...state.allPosts].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));

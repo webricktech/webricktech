@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     const res = await fetch(
-      "https://admin.webricktech.com/items/team_members?fields=id,name,email,photo_url,role_id.name"
+      "https://admin.webricktech.com/items/team_members"
     );
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
@@ -11,15 +11,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     container.innerHTML = members
       .map(
-        ({ name, photo_url, role_id }) => `
+        ({ name, photo, position }) => `
         <div class="col-md-6 col-lg-4 mt-2-9 wow fadeInUp" data-wow-delay="200ms">
           <div class="card card-style04 border-radius-10">
             <div class="team-img border">
-              <img src="https://admin.webricktech.com/assets/${photo_url}?width=486&height=585&fit=cover" 
+              <img src="https://admin.webricktech.com/assets/${photo}?width=486&height=585&fit=cover" 
                    alt="${name}" class="border-radius-10">
               <div class="card-body">
                 <h3><a href="team-details.html" class="text-white">${name}</a></h3>
-                <span class="text-white opacity6">${role_id?.name || ""}</span>
+                <span class="text-white opacity6">${position || ""}</span>
               </div>
             </div>
             <ul class="mb-0 list-unstyled team-social">
